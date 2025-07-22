@@ -5,10 +5,15 @@ import { v4 as uuidv4 } from 'uuid'
 import { supabase } from './utils/supabaseClient'
 import ChatRoom from './components/ChatRoom'
 
+interface User {
+  id: string;
+  created_at: string;
+}
+
 export default function Home() {
   const [myId, setMyId] = useState('')
-  const [user1, setUser1] = useState(null)
-  const [user2, setUser2] = useState(null)
+  const [user1, setUser1] = useState<User | null>(null)
+  const [user2, setUser2] = useState<User | null>(null)
   const [status, setStatus] = useState<'waiting' | 'matched' | 'ended'>('waiting')
 
   const myIdRef = useRef<string | null>(null)
@@ -28,7 +33,10 @@ export default function Home() {
     if (status === 'matched') {
       if (!user1 || !user2) return
 
-      const chatRoomId = [user1.id, user2.id].sort().join('-')
+      const currentUser1: User = user1;
+      const currentUser2: User = user2;
+
+      const chatRoomId = [currentUser1.id, currentUser2.id].sort().join('-')
       const leaveChannel = supabase.channel(`leave-${chatRoomId}`)
 
       leaveChannel.on('broadcast', { event: 'leave' }, (payload) => {
@@ -109,7 +117,9 @@ export default function Home() {
 
   const handleLeave = async () => {
     if (!user1 || !user2) return
-    const chatRoomId = [user1.id, user2.id].sort().join('-')
+    const currentUser1: User = user1;
+    const currentUser2: User = user2;
+    const chatRoomId = [currentUser1.id, currentUser2.id].sort().join('-')
     const leaveChannel = supabase.channel(`leave-${chatRoomId}`)
     await leaveChannel.send({
       type: 'broadcast',
