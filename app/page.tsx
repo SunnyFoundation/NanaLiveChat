@@ -30,6 +30,8 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+
+
     if (status === 'matched') {
       if (!user1 || !user2) return
 

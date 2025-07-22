@@ -40,14 +40,11 @@ export default function ChatRoom({ user1, user2, myId, onLeave }: ChatRoomProps)
   useEffect(() => {
     if (!user1 || !user2) return
 
-    const currentUser1 = user1 as User;
-    const currentUser2 = user2 as User;
-
     setMessages([])
 
     // Set up a real-time subscription
     const channel = supabase
-      .channel(`chat-room-${[currentUser1.id, currentUser2.id].sort().join('-')}`)
+      .channel(`chat-room-${[user1.id, user2.id].sort().join('-')}`)
       .on(
         'postgres_changes',
         {
@@ -59,8 +56,8 @@ export default function ChatRoom({ user1, user2, myId, onLeave }: ChatRoomProps)
           const newMessage = payload.new as Message
           // Check if the message belongs to this room and update state
           if (
-            (newMessage.sender === currentUser1.id && newMessage.receiver === currentUser2.id) ||
-            (newMessage.sender === currentUser2.id && newMessage.receiver === currentUser1.id)
+            (newMessage.sender === user1.id && newMessage.receiver === user2.id) ||
+            (newMessage.sender === user2.id && newMessage.receiver === user1.id)
           ) {
             setMessages((prevMessages) => [...prevMessages, newMessage])
           }
@@ -94,6 +91,7 @@ export default function ChatRoom({ user1, user2, myId, onLeave }: ChatRoomProps)
 
   return (
     <div>
+      
       <div 
         style={{ 
           marginTop: '1rem', 
