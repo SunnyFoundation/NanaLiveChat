@@ -104,7 +104,7 @@ export default function Home() {
         
         waitingChannel.subscribe()
         channelRef.current = waitingChannel
-        handleMatchCheck()
+
       }
 
       setup()
